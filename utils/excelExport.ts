@@ -23,12 +23,18 @@ export const groupByMonth = (data: CaseData[]): Map<string, CaseData[]> => {
     const parts = record.date.split(' ');
     if (parts.length === 3) {
       // parts[0] = Day, parts[1] = Month, parts[2] = Year
-      const monthKey = `${parts[1]}_${parts[2]}`; // e.g., "10_2025"
+      const month = parseInt(parts[1], 10);
+      const year = parseInt(parts[2], 10);
       
-      if (!grouped.has(monthKey)) {
-        grouped.set(monthKey, []);
+      // Validate month is between 1-12 and year is a valid number
+      if (month >= 1 && month <= 12 && !isNaN(year)) {
+        const monthKey = `${parts[1]}_${parts[2]}`; // e.g., "10_2025"
+        
+        if (!grouped.has(monthKey)) {
+          grouped.set(monthKey, []);
+        }
+        grouped.get(monthKey)!.push(record);
       }
-      grouped.get(monthKey)!.push(record);
     }
   });
   
@@ -113,8 +119,16 @@ const createWorkbook = (data: CaseData[]): XLSX.WorkBook => {
  * Format: DC_Records_MonthName_Year.xlsx
  */
 const getFileName = (monthKey: string): string => {
-  const [month, year] = monthKey.split('_');
-  const monthName = getMonthName(parseInt(month, 10));
+  const parts = monthKey.split('_');
+  if (parts.length !== 2) {
+    return `DC_Records_Unknown.xlsx`;
+  }
+  const [month, year] = parts;
+  const monthNum = parseInt(month, 10);
+  if (isNaN(monthNum) || monthNum < 1 || monthNum > 12) {
+    return `DC_Records_Unknown_${year}.xlsx`;
+  }
+  const monthName = getMonthName(monthNum);
   return `DC_Records_${monthName}_${year}.xlsx`;
 };
 
