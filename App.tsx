@@ -4,7 +4,8 @@ import { CaseData } from './types';
 import { ReportTable } from './components/ReportTable';
 import { Dashboard } from './components/Dashboard';
 import { AddEntryModal } from './components/AddEntryModal';
-import { LayoutDashboard, FileSpreadsheet, Search, Calendar, Plus } from 'lucide-react';
+import { LayoutDashboard, FileSpreadsheet, Search, Calendar, Plus, Download } from 'lucide-react';
+import { exportAllByMonth } from './utils/excelExport';
 
 const App: React.FC = () => {
   const [rawData, setRawData] = useState<CaseData[]>([]);
@@ -121,10 +122,17 @@ const App: React.FC = () => {
           <div className="flex flex-wrap items-center gap-3">
              <button 
               onClick={() => setIsAddModalOpen(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded hover:bg-blue-700 transition-colors shadow-sm mr-2"
+              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded hover:bg-blue-700 transition-colors shadow-sm"
             >
               <Plus size={16} />
               Add Entry
+            </button>
+            <button 
+              onClick={() => exportAllByMonth(filteredData)}
+              className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white text-sm font-medium rounded hover:bg-green-700 transition-colors shadow-sm mr-2"
+            >
+              <Download size={16} />
+              Export to Excel
             </button>
 
             <div className="relative">
